@@ -1,63 +1,72 @@
-# Routing
+# Jinja2 templates
 [README_PREV.md](./README_PREV.md)
 
-## New app layout
-[Simple Packages](https://flask.palletsprojects.com/en/1.1.x/patterns/packages/#simple-packages).
-
-Let's keep web files in `web_app` catalog. Don't mix it with READMEs, instructions and other playground scripts...
+* [Flask docs - Rendering Templates][]
+* [Jinja2 docs - Rendering Templates][]
 
 
-## New view (index)
-[Flask docs - Routing](https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing)
+## Variables
+* [Jinja2 docs - Variables][]
 
-### Add other one (with arguments)
-```python
-@app.route('/user/<username>/')
-def profile(username):
-    return f"{username}'s profile"
+### Filters
+* [Jinja2 docs - Filters][]
+* [Jinja2 docs - List of Builtin Filters][]
+```
+{{ "stRanGE sTRing"|lower }}
 ```
 
-### Remember about trailing slashes
-```python
-@app.route('/user/<name>')  # problematic
-@app.route('/user/<name>/')
-```
+## Template Inheritance
+* [Jinja2 docs - Template Inheritance][]
+* Make `index.html` based on `base.html`
 
-## Set `FLASK_ENV=development`
-[Flask docs - Debug Mode](https://flask.palletsprojects.com/en/1.1.x/quickstart/#debug-mode)
-1. it activates the debugger
-1. it activates the automatic reloader
-1. it enables the debug mode on the Flask application.
+## Control Structures
+* [Jinja2 docs - List of Control Structures][]
 
-### Cygwin
-```bash
-# run application
-$ FLASK_APP='main.py' FLASK_ENV=development flask run
-```
-
-### pyCharm
-Add `FLASK_ENV=development` in `Run configuration` -> `Environment variables`
+### Interesting structures
+* For loop
+* If statement
+* Assignments 
 
 ## Assignments
+### Use `render_template` in `profile` endpoint
+Instead of simply returning string - render jinja template (you'll have to create new `.html` file).  
+Display corresponding message.
 
-### 1. Url converters
-[Flask docs - Variable rules](https://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules)
+### Use `for` loop in `profile` template.
+Update new template of `profile` endpoint, which will display `name` value `anount` times using html list.
+* [Statements doc - for][]
+* [HTML unordered list doc][]
 
-#### Define functions:
-* hello_number(number: int):
-* hello_uuid(uuid):
-* hello_both(text, number):
+Tips!:
+* Python loop iterating n times: `for _ in range(n):`
+* `amount` passed from kwargs is of type str (must be converted to int `int(amount)`)
+* Inside of control structures you don't have to use `{{ }}` brackets in order to access variables.
 
-#### Visit:
-* http://127.0.0.1:5000/user/name/
-* http://127.0.0.1:5000/user/42/
-* http://127.0.0.1:5000/user/123e4567-e89b-12d3-a456-426614174000/
-* http://127.0.0.1:5000/user/he/man/42/  # make it work
+### Use `if` statement in `profile` template.
+If `name` pased to `hello_from_kwargs` equals `Admin` - display name only once.  
+All other names should work as before.
+
+Additionally wrap every second name in list with `<strong>This text is important!</strong>`
+
+* [Statements doc - if](https://jinja2docs.readthedocs.io/en/stable/templates.html#if)
+* [HTML strong tag doc](https://www.w3schools.com/tags/tag_strong.asp)
+
+Tips!:
+* use `loop.index` and check modulo 2 to detect even / odd elements
+
+### Use `filters`
+* Make sure that we won't use for loop for any "admin" variation (ADMIN, Admin, aDmin, aDMIn).
+* Truncate name to 10 characters
 
 
-### 2. `hello_from_kwargs` available in two urls
-Make `hello_from_kwargs` view available under `/other_link/<name>/`
-
-### 3. Use `add_url_rule` instead of `app.route` decorator.
-Use [`add_url_rule`](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.add_url_rule) instead of `app.route`
-decorator.
+[Flask docs - Rendering Templates]: https://flask.palletsprojects.com/en/1.1.x/quickstart/#rendering-templates
+[Jinja2 docs - Rendering Templates]: https://jinja2docs.readthedocs.io/en/stable/templates.html
+[Jinja2 docs - Variables]: https://jinja2docs.readthedocs.io/en/stable/templates.html#variables
+[Jinja2 docs - Filters]: https://jinja2docs.readthedocs.io/en/stable/templates.html#filters
+[Jinja2 docs - Template Inheritance]: https://jinja2docs.readthedocs.io/en/stable/templates.html#template-inheritance
+[Jinja2 docs - List of Builtin Filters]: https://jinja2docs.readthedocs.io/en/stable/templates.html#builtin-filters
+[Jinja2 docs - List of Control Structures]: https://jinja2docs.readthedocs.io/en/stable/templates.html#list-of-control-structures
+[Statements doc - for]: https://jinja2docs.readthedocs.io/en/stable/templates.html#for
+[Statements doc - if]: https://jinja2docs.readthedocs.io/en/stable/templates.html#if
+[HTML unordered list doc]: https://www.w3schools.com/HTML/html_lists.asp
+[HTML strong tag doc]: https://www.w3schools.com/tags/tag_strong.asp

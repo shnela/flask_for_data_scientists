@@ -1,49 +1,63 @@
-# Flask
+# Routing
+[README_PREV.md](./README_PREV.md)
 
-[What is flask according to duck?](https://duckduckgo.com/?q=flask&t=ffab&atb=v192-1&ia=web)
+## New app layout
+[Simple Packages](https://flask.palletsprojects.com/en/1.1.x/patterns/packages/#simple-packages).
 
-## April Fool's joke
-> Flask was created by Armin Ronacher of Pocoo, an international group of Python enthusiasts formed in 2004.
-According to Ronacher, the idea was originally an April Fool's joke that was popular enough to make into a serious
-application.
->
-> When Ronacher and Georg Brandl created a bulletin board system written in Python,
->the Pocoo projects Werkzeug and Jinja were developed.
->
-> Flask has become popular among Python enthusiasts.
-> As of October 2020, it has second most stars on GitHub among Python web-development frameworks,
-only slightly behind Django, and was voted the most popular web framework in the Python Developers Survey 2018.
+Let's keep web files in `web_app` catalog. Don't mix it with READMEs, instructions and other playground scripts...
 
-_Wiki_
 
-## [Pallets Project](https://palletsprojects.com/)
-> The Pallets Projects are a collection of Python web development libraries that were independently developed by
-Armin Ronacher and later used as the basis of the Flask microframeworkToday the Pallets Projects are a community-driven
-organization with the goal to maintain and improve those libraries.
+## New view (index)
+[Flask docs - Routing](https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing)
 
-## Who's [Armin Ronacher](https://en.wikipedia.org/wiki/Armin_Ronacher)??
+### Add other one (with arguments)
+```python
+@app.route('/user/<username>/')
+def profile(username):
+    return f"{username}'s profile"
+```
 
-## [Django](https://duckduckgo.com/?t=ffab&q=django+web+framework&atb=v192-1&ia=web) THE alternative
-[Django team](https://www.djangoproject.com/foundation/teams/)
+### Remember about trailing slashes
+```python
+@app.route('/user/<name>')  # problematic
+@app.route('/user/<name>/')
+```
 
-## Flask is minimal, Django is huge
-* But both are popular: [Flask](https://stackshare.io/flask) vs [Django](https://stackshare.io/django)
-* Flask is easier to gasp
+## Set `FLASK_ENV=development`
+[Flask docs - Debug Mode](https://flask.palletsprojects.com/en/1.1.x/quickstart/#debug-mode)
+1. it activates the debugger
+1. it activates the automatic reloader
+1. it enables the debug mode on the Flask application.
 
-## Let's run it
-* In cygwin
-* In Ubuntu  
-* And pyCharm
+### Cygwin
+```bash
+# run application
+$ FLASK_APP='main.py' FLASK_ENV=development flask run
+```
 
-### Test different ports
-[How](https://flask.palletsprojects.com/en/1.1.x/cli/#setting-command-options)
+### pyCharm
+Add `FLASK_ENV=development` in `Run configuration` -> `Environment variables`
 
-#### In source file (pyCharm run)
-Like `app.run(port=5001)`
+## Assignments
 
-#### In Cygwin / Ubuntu
-* `FLASK_APP='main.py' flask run --port 5002`
-* `FLASK_APP='main.py' FLASK_RUN_PORT=5002 flask run`
+### 1. Url converters
+[Flask docs - Variable rules](https://flask.palletsprojects.com/en/1.1.x/quickstart/#variable-rules)
 
-### But What does `if __name__ == “__main__”`: do?
-[Stack answer](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+#### Define functions:
+* hello_number(number: int):
+* hello_uuid(uuid):
+* hello_both(text, number):
+
+#### Visit:
+* http://127.0.0.1:5000/user/name/
+* http://127.0.0.1:5000/user/42/
+* http://127.0.0.1:5000/user/123e4567-e89b-12d3-a456-426614174000/
+* http://127.0.0.1:5000/user/he/man/42/  # make it work
+
+
+### 2. `hello_from_kwargs` available in two urls
+Make `hello_from_kwargs` view available under `/other_link/<name>/`
+
+### 3. Use `add_url_rule` instead of `app.route` decorator.
+Use [`add_url_rule`](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.add_url_rule) instead of `app.route`
+decorator.
