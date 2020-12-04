@@ -5,8 +5,8 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from werkzeug.routing import ValidationError
 from werkzeug.utils import redirect
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -15,6 +15,7 @@ Bootstrap(app)
 
 class LoginForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
+    age = IntegerField('age', validators=[DataRequired(), NumberRange(min=0)])
     submit = SubmitField('Submit')
 
     def validate_name(self, field):
@@ -26,7 +27,7 @@ class LoginForm(FlaskForm):
 def index():
     user_info = {
         'name': session.get('name', 'Unknown'),
-        'age': int(request.args.get('age', 42)),
+        'age': session.get('age', 0),
     }
     return render_template('index.html', user_info=user_info)
 
@@ -42,5 +43,15 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         session['name'] = form.name.data
+        session['age'] = form.age.data
         return redirect(url_for('index'))
     return render_template('auth/login.html', form=form)
+
+
+@app.route('/logout/')
+def logout():
+    if 'name' in session:
+        del session['name']
+    if 'age' in session:
+        del session['age']
+    return redirect(url_for('index'))
