@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, session, url_for
+from flask import Flask, render_template, flash, session, url_for
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from werkzeug.routing import ValidationError
@@ -25,6 +25,7 @@ class LoginForm(FlaskForm):
 
 @app.route('/')
 def index():
+    flash('index page')
     user_info = {
         'name': session.get('name', 'Unknown'),
         'age': session.get('age', 0),
@@ -44,12 +45,14 @@ def login():
     if form.validate_on_submit():
         session['name'] = form.name.data
         session['age'] = form.age.data
+        flash('You were successfully logged in')
         return redirect(url_for('index'))
     return render_template('auth/login.html', form=form)
 
 
 @app.route('/logout/')
 def logout():
+    flash('You were successfully logged out')
     if 'name' in session:
         del session['name']
     if 'age' in session:
