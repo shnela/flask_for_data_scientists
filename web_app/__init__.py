@@ -15,9 +15,20 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(CURRENT_DIR, 'uploaded_data'))
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(CURRENT_DIR, '..', 'test.db')}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 Bootstrap(app)
 toolbar = DebugToolbarExtension(app)
+db = SQLAlchemy(app)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+
+
+class UserForm(FlaskForm):
+    pass
 
 
 class LoginForm(FlaskForm):
@@ -39,9 +50,21 @@ def index():
     return render_template('index.html', user_info=user_info)
 
 
-@app.route('/user/<username>/<int:amount>/')
-def profile(username, amount):
-    return render_template('profile.html', username=username, amount=amount)
+@app.route('/user/')
+def users():
+    users = User.query.all()
+    return render_template('users.html', users=users)
+
+
+@app.route('/user/add/', methods=['GET', 'POST'])
+def user_add():
+    pass
+
+
+@app.route('/user/<int:user_id>')
+def user_details(user_id):
+    user = User.query.get(user_id)
+    return render_template('user_details.html', user=user)
 
 
 @app.route('/download/')
@@ -62,10 +85,3 @@ def upload():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('index'))
     return render_template('upload.html', form=form)
-
-
-@app.route('/session_kv_storage/<key>/<int:val>/')
-def session_kv_storage(key, val):
-    from flask import session, redirect, url_for
-    session[key] = val
-    return redirect(url_for('.index'))

@@ -5,7 +5,10 @@ fake = Faker()
 
 
 def create_users(users_number=10):
-    pass
+    for _ in range(users_number):
+        u = User(username=fake.unique.first_name())
+        db.session.add(u)
+        db.session.commit()
 
 
 def delete_all():
