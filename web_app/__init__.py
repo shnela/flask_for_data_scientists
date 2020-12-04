@@ -2,18 +2,22 @@ import os
 
 from flask import Flask, render_template, session, url_for, send_from_directory
 from flask_bootstrap import Bootstrap
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect, secure_filename
 from wtforms import SubmitField, FileField
 from wtforms.validators import DataRequired, ValidationError
 
-
 CURRENT_DIR = os.path.dirname(__file__)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(CURRENT_DIR, 'uploaded_data'))  # folder must exist
+app.config['UPLOAD_FOLDER'] = os.path.abspath(os.path.join(CURRENT_DIR, 'uploaded_data'))
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(CURRENT_DIR, '..', 'test.db')}"
+
 Bootstrap(app)
+toolbar = DebugToolbarExtension(app)
 
 
 class LoginForm(FlaskForm):
