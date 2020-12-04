@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block body %}
+{% block custom_content %}
   {% if username|upper == 'ADMIN' %}
     <h1>Hello {{ username }} ({{ amount }})!</h1>
   {% else %}
-    <ul>
+    <ul class="list-group">
     {% for _ in range(amount) %}
       {% if loop.index % 2 == 0 %}
-        <li><strong>{{ username|truncate(10) }}</strong></li>
+        <li class="list-group-item"><strong>{{ username|truncate(10) }}</strong></li>
       {% else %}
-        <li>{{ username|truncate(10) }}</li>
+        <li class="list-group-item">{{ username|truncate(10) }}</li>
       {% endif %}
     {% endfor %}
     </ul>

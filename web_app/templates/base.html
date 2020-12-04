@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Our page</title>
-</head>
-
-<body>
+{% extends "bootstrap/base.html" %}
 
 {% block navbar %}
   <nav class="navbar navbar-default">
@@ -52,9 +45,9 @@
   </nav>
 {% endblock navbar %}
 
-<h1>Simple Flask page</h1>
-{% block body %}
-  <div>Default body block</div>
+{% block content %}
+  <div class="container">
+    {% block custom_content %}
+    {% endblock %}
+  </div>
 {% endblock %}
-</body>
-</html>
