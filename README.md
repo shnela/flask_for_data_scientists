@@ -1,44 +1,58 @@
-# Flask-WTF - revision
+# Flask Debug Toolbar
+[README_PREVIOUS.md](./README_PREVIOUS.md)
 
-[README_PREV.md](./README_PREV.md)
-(I'm cheating - it's readme_prev_prev, but haven't done anything interesting recently)
+[Flask-DebugToolbar - docs][]
 
-[Flask - Uploading Files][]
-1. A `<form>` tag is marked with `enctype=multipart/form-data` and an `<input type=file>` is placed in that form.
-1. The application accesses the file from the files dictionary on the request object.
-1. use the save() method of the file to save the file permanently somewhere on the filesystem.
+## Installation
+Your requirements.txt is updated, pyCharm will do the job
 
 
-## Current dir
-Instruction in `auxiliary_code/python_path.py`
+## `session_kv_storage` view in `views.py`
+Test:
+* 127.0.0.1:5000/session_kv_storage/key1/42/ 
+* 127.0.0.1:5000/session_kv_storage/k2/42/ 
+* 127.0.0.1:5000/session_kv_storage/k3/55/ 
 
-## Problem with `regexp_validator`
-Replace it with
+
+## Python play (dict accessing)
+```
+# NOT IMPORTANT, I'M JUST GENERATING DICT IN FANCY WAY
+>>> letters = 'abcdefgh'
+>>> numbers = range(8)
+>>> zip(letters, numbers)
+<zip object at 0x10222cbc0>
+>>> zip(letters, numbers)[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'zip' object is not subscriptable
+>>> list(zip(letters, numbers))
+[('a', 0), ('b', 1), ('c', 2), ('d', 3), ('e', 4), ('f', 5), ('g', 6), ('h', 7)]
+>>> dict(zip(letters, numbers))
+{'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
+>>> d = dict(zip(letters, numbers))
+
+# EXTREMLY IMPORTANT - ACCESSING DICT ELEMENTS IS CRUCIAL
+>>> d.keys()
+dict_keys(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
+>>> d.values()
+dict_values([0, 1, 2, 3, 4, 5, 6, 7])
+>>> d.items()
+dict_items([('a', 0), ('b', 1), ('c', 2), ('d', 3), ('e', 4), ('f', 5), ('g', 6), ('h', 7)])
+```
+
+### Do debugging
+`list(session.items())`
+
+## Update `ml_runner/__init__.py`
+
+Add following in proper places of `web_app/__init__.py`.
 ```python
-def validate_input_data(self, field):
-    data = field.data
-    if not data or not data.filename.endswith('.csv'):
-        raise ValidationError('Only csv files allowed')
+from flask_debugtoolbar import DebugToolbarExtension
+toolbar = DebugToolbarExtension(app)
 ```
 
-## Save file
-```python
-file = form.input_data.data
-filename = secure_filename(file.filename)
-file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-```
+## Flask application MUST run in **debug** mode
 
-Where I got it from? Show debugger.
+We did it previously when settings `FLASK_ENV=development`
 
-
-## Assignment
-Save recently uploaded `filename` in session and display it's name in index.  
-Add new view `download` which will use [Flask - send_from_directory] and returns the file.  
-Add `<a>` in `index` which will be responsible for downloading csv.
-```html
-<a href="{{ url_for('download') }}">download file ({{ session.filename }})</a>
-```
-
-
-[Flask - Uploading Files]: https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
-[Flask - send_from_directory]: https://flask.palletsprojects.com/en/1.1.x/api/#flask.send_from_directory
+[Flask-DebugToolbar - docs]: https://flask-debugtoolbar.readthedocs.io/en/latest/
