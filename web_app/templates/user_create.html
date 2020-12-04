@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block custom_content %}
+  <form enctype="multipart/form-data" method="POST">
+    {{ wtf.quick_form(form) }}
+  </form>
+{% endblock %}
