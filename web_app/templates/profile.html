@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+  {% if username|upper == 'ADMIN' %}
+    <h1>Hello {{ username }} ({{ amount }})!</h1>
+  {% else %}
+    <ul>
+    {% for _ in range(amount) %}
+      {% if loop.index % 2 == 0 %}
+        <li><strong>{{ username|truncate(10) }}</strong></li>
+      {% else %}
+        <li>{{ username|truncate(10) }}</li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

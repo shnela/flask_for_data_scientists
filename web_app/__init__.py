@@ -12,6 +12,6 @@ def index():
     return render_template('index.html', user_info=user_info)
 
 
-@app.route('/user/<username>/<amount>/')
+@app.route('/user/<username>/<int:amount>/')
 def profile(username, amount):
-    return f"<h1>{username}'s profile ({amount})</h1>"
+    return render_template('profile.html', username=username, amount=amount)
