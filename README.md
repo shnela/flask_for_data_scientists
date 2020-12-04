@@ -1,22 +1,19 @@
-# Flask-WTF - revision
+# Flash messages
 
-[README_PREV.md](./README_PREV.md)
+[Flask flashing instructions](https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/)
 
-New fields - email and passwords.
+* Flash for logged in user
+* comment out some login fields
+* Display messages in base.html
+* flash messages goes from login -> index and accumulates
+* Make prettier with [Dismissible alerts](https://getbootstrap.com/docs/3.4/components/#alerts-dismissible)
+* Log out notification
 
-```python
-email = StringField('email', validators=[DataRequired(), Email()])
-password = PasswordField('password', validators=[DataRequired()])
-password2 = PasswordField('password2', validators=[DataRequired(), EqualTo('password')])
-```
 
-But `Email` validator requires new plugin.
-Install `email-validator` using
-```
-Preferences | Project: ml_runner | Python Interpreter | + 
-```
+## Additional assignment - Flashing With Categories
+https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/#flashing-with-categories
 
-### Additional tasks
-* Allow email addresses from from 'protonmail.com' only.
-* Add field where user can optionally chose sex from choices list (user can select only one option).
-* Add field where user can select none or several of options [meat, cheese, chips]
+Make logout alert yellow with (class="alert alert-warning")
+
+Use parameter `category` in function [flash](https://flask.palletsprojects.com/en/1.1.x/api/#flask.flash)
+and `with_categories` in function `get_flashed_messages`
