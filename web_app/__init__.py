@@ -5,6 +5,7 @@ from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
+from werkzeug.exceptions import abort
 from werkzeug.utils import redirect, secure_filename
 from wtforms import SubmitField, FileField, StringField
 from wtforms.validators import DataRequired, ValidationError
@@ -72,9 +73,9 @@ def user_add():
     return render_template('user_create.html', form=form)
 
 
-@app.route('/user/<int:user_id>')
+@app.route('/user/<int:user_id>/')
 def user_details(user_id):
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template('user_details.html', user=user)
 
 
@@ -95,3 +96,18 @@ def upload():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('index'))
     return render_template('upload.html', form=form)
+
+
+@app.route('/return_error/<int:response_code>/')
+def return_response_with_code(response_code):
+    return f'Return {response_code}', response_code
+
+
+@app.route('/abort_error/<int:response_code>/')
+def abort_response_with_code(response_code):
+    abort(response_code)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
