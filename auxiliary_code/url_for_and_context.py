@@ -20,11 +20,11 @@ def display_request():
 
 def display_urls():
     with app.test_request_context():
-        print(url_for('index'))
-        print(url_for('index', username='Joe'))
-        print(url_for('index', username='Joe', other_get_arg='Mike'))
-        print(url_for('profile', username='Joe', amount=2))
-        print(url_for('profile', username='Joe', amount=2, _external=True))
+        print(url_for('main.index'))
+        print(url_for('main.index', username='Joe'))
+        print(url_for('main.index', username='Joe', other_get_arg='Mike'))
+        print(url_for('main.profile', username='Joe', amount=2))
+        print(url_for('main.profile', username='Joe', amount=2, _external=True))
 
 
 if __name__ == '__main__':
