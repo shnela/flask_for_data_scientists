@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from . import db
 
@@ -13,5 +13,5 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text(), nullable=False)
     creation_date = db.Column(db.DateTime(timezone=True), nullable=False,
-                              default=lambda: datetime.now(tz=timezone.utc))
+                              default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)

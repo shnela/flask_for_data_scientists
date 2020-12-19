@@ -12,7 +12,10 @@
         Id: {{ post.id }}
       </li>
       <li class="list-group-item">
-        Created at: {{ post.creation_date }}
+        Created at: {{ moment(post.creation_date).format() }} <br/>
+        Created at: {{ moment(post.creation_date).format('MMMM Do YYYY, h:mm:ss a') }} <br/>
+        Created at: {{ moment(post.creation_date).fromNow() }} <br/>
+        Created at: {{ moment(post.creation_date).calendar() }} <br/>
       </li>
       <li class="list-group-item">
         Author: {{ post.user.username }}

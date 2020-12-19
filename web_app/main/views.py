@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 
 from flask import render_template, session, url_for, send_from_directory, request, current_app
 from werkzeug.utils import redirect, secure_filename
@@ -48,7 +49,10 @@ def user_details(user_id):
 @bp.route('/post/<int:post_id>/')
 def post_details(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post_details.html', post=post)
+    now_with_tz = datetime.now(tz=timezone.utc)
+    now_without_tz = datetime.now(tz=timezone.utc)
+    return render_template('post_details.html', post=post,
+                           now_with_tz=now_with_tz, now_without_tz=now_without_tz)
 
 
 @bp.route('/post/add/', methods=['GET', 'POST'])
