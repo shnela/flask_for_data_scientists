@@ -1,6 +1,7 @@
-from web_app import db
-from web_app.models import User
 from faker import Faker
+
+from web_app import db
+from web_app.models import User, Post
 
 fake = Faker()
 
@@ -14,12 +15,19 @@ def create_users(users_number=10):
 
 def delete_all():
     User.query.delete()
+    Post.query.delete()
+    db.session.commit()
+
+
+def create_posts(n=10):
+    for _ in range(n):
+        p = Post(content=fake.unique.text())
+        db.session.add(p)
     db.session.commit()
 
 
 if __name__ == '__main__':
     db.create_all()
     delete_all()
-    print(User.query.count())
     create_users(100)
-    print(User.query.count())
+    create_posts(100)
