@@ -9,7 +9,7 @@ class Config:
     UPLOAD_FOLDER = os.path.abspath(os.path.join(CURRENT_DIR, 'uploaded_data'))
 
     # Flask-SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(CURRENT_DIR, '..', 'test.db')}"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Flask-BasicAuth
