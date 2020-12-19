@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block custom_content %}
+  <h1>[{{ user.id }}] {{ user.username }}</h1>
+
+  <h2>Posts ({{ user.posts|length }})</h2>
+  <ul class="list-group">
+    {% for post in user.posts %}
+      <li class="list-group-item">
+        <a href="{{ url_for('main.post_details', post_id=post.id) }}">{{ post.id }}</a>
+        <span>[{{ post.creation_date }}]</span>
+        <div>{{ post.content }}</div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -38,10 +38,15 @@ def user_add():
     return render_template('user_create.html', form=form)
 
 
-@bp.route('/user/<int:user_id>')
+@bp.route('/user/<int:user_id>/')
 def user_details(user_id):
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template('user_details.html', user=user)
+
+
+@bp.route('/post/<int:post_id>/')
+def post_details(post_id):
+    pass
 
 
 @bp.route('/download/')
