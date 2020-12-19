@@ -4,12 +4,13 @@ from flask import render_template, session, url_for, send_from_directory, reques
 from werkzeug.utils import redirect, secure_filename
 
 from . import bp
-from .forms import UserForm, LoginForm
-from .. import db
-from ..models import User
+from .forms import UserForm, LoginForm, PostForm
+from .. import db, basic_auth
+from ..models import User, Post
 
 
 @bp.route('/')
+@basic_auth.required
 def index():
     user_info = {
         'name': session.get('name', 'Unknown'),
@@ -46,7 +47,24 @@ def user_details(user_id):
 
 @bp.route('/post/<int:post_id>/')
 def post_details(post_id):
-    pass
+    post = Post.query.get_or_404(post_id)
+    return render_template('post_details.html', post=post)
+
+
+@bp.route('/post/add/', methods=['GET', 'POST'])
+def post_add():
+    form = PostForm()
+    # form.author.choices = [(1, 'User1'), (2, 'User2')]
+    form.author.choices = [(u.id, u.username) for u in User.query.all()]
+    if form.validate_on_submit():
+        new_post = Post(
+            content=form.content.data,
+            user_id=form.author.data,
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for('.user_details', user_id=new_post.user_id))
+    return render_template('post_create.html', form=form)
 
 
 @bp.route('/download/')

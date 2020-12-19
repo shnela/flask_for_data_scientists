@@ -1,72 +1,122 @@
-# New model (Post) - exercises
+# `User` has written the `Post` - one to many
 
 [README_PREV.md](./README_PREV.md)
 
-## New model `Post` (blog post)
-`Post` should have
-* `id`
-* `content`
-* `creation_date` (default now)
+## First let's look at moved templates
+Now templates are inside blueprint.
 
-What type should we use for blog post?  
-[Available Flask-SQLAlchemy field types](https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#simple-example)
+
+## Look at our `User` and `Post` models in dBeaver
+```
+test.db -> Tables -> ER Diagram
+```
+
+And compare with [this](https://fmhelp.filemaker.com/help/18/fmp/en/index.html#page/FMP_Help/one-to-many-relationships.html)
+explanation.
+
+## One to many in `Flask-SQLAlchemy`
+
+[One to many - Flask](https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#one-to-many-relationships)
 
 ```python
-from datetime import datetime, timezone
-datetime.now()
-datetime.now(tz=timezone.utc)
+class User:
+    ...
+    posts = db.relationship('Post', backref='user', lazy=True)
+
+class Post:
+    ...
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 ```
 
-**Always use utc timezone in backend code**
+We edited only `post` **database table** - we've added `user_id` column.  
 
-But remember, [datetime handling is mess](https://zachholman.com/talk/utc-is-enough-for-everyone-right)
-> So you’ve got a bunch of scientist types around 1960 who are like, hey, time is all screwy we should totes make a standard. And some of them spoke English, and some of them spoke French, which, of course, is the cause of so much conflict over so many generations. (In hindsight, maybe we should have split all those troublemakers up from the start.)
+### Test new model in flask shell
+[how to run flask shell](INSTRUCTIONS_TO_COPY.md)
 
-> The English-speaking folk were like yo, this definitely sounds like Coordinated Universal Time, boom, ship it. And the French speakers were like yeah that makes total sense! Temps Universel Coordonné DOES work out well in our language, too, ship it! Then they both looked up and realized cool, they’ve created both CUT and TUC for acronyms. Shit.
-
-> When your standard — that is expressly meant to standardize time — doesn’t even standardize on a standard acronym, well, damn, that probably doesn’t bode well for your standard.
-
-Let's see `default` datetime for `creation_date` `Column`: `datetime.now`
-
-## Post model created - let's play with it in flask shell
-*To run `Flask shell` see [INSTRUCTIONS_TO_COPY.md](INSTRUCTIONS_TO_COPY.md) file*
 ```
->>> from ml_runner.models import User, Post
->>> User.query.count()
-100
->>> Post.query.count()
-Error...
-
+>>> from ml_runner.models import Post
+>>> Post.query.first()
+# doesn't work :(
 >>> from ml_runner import db
 >>> db.create_all()
->>> Post.query.count()
+>>> Post.query.first()
+# did it help?
 ```
 
-`db.create_all()` creates **new** tables.  
-It doesn't handle modifications (like new field). For that we'd need
-[migrations](https://flask-migrate.readthedocs.io/en/latest/).
+But we have to **delete** Post tables and recreate it again.
+[Flask-sqlalchemy](https://flask-migrate.readthedocs.io/en/latest/) would help.
 
+1. **Close flask shell - ctrl-D**
+1. **Delete db file**
+
+Then run in shell
 ```
->>> Post.query.count()
-# now it works
-
-# Let's add new post
->>> p = Post(content='Some short tweet')
->>> p.id
->>> p.content
-'Some short tweet'
->>> p.creation_date
 >>> from ml_runner import db
->>> db.session.add(p)
->>> p.id, p.content, p.creation_date
-(None, 'Some short tweet', None)
-AttributeError: 'scoped_session' object has no attribute 'save'
->>> db.session.commit()
->>> p.id, p.content, p.creation_date
-(1, 'Some short tweet', datetime.datetime(2020, 11, 25, 21, 13, 8, 719911))
+>>> from ml_runner.models import Post
+>>> db.create_all()
+>>> Post.query.first()
+# nice!
 ```
 
-**`id` and `creation_date` are generated when saving to database.**
+Generate some users and posts in `gen_fake_models.py`
+
+```
+>>> from ml_runner.models import User, Post
+>>> u = User.query.first()
+>>> p1 = Post.query.first()
+>>> p2 = Post.query.offset(1).first()
+>>> p1.user_id = u.id
+>>> p2.user_id = u.id
+>>> from ml_runner import db
+>>> db.session.add(p1, p2)
+>>> db.session.commit()
+
+# pause for dBeaver
+
+>>> u.posts
+[<Post 1>, <Post 2>]
+>>> p1.user
+<User 'Debra'>
+```
+
+## Let's display Posts
+Right now we can use `posts` variable as part of `User` model.
+
+It's used in `web_app/main/templates/user_details.html`.
+
+## Assignment
+Before you start, update `auxiliary_code/gen_fake_models.py` with:
+```python
+create_users(20, posts_per_user=10)
+```
+and run.
+
+### Make `web_app/main/views.py:post_details` works.
+It requires:
+* accessing `Post` from database
+* new custom template
+* base it on `user_details` endpoint
+* Display:
+  * `id`
+  * Author - `user`
+  * `content`
+  * Link back `` go back link
+
+### Implement `post_add` endpoint
+* You'll require new `PostForm` with fields:
+  * `content`: use [StringField wtf field][] with [TextArea wtf widget][]
+  * `user_id`: use `author = SelectField('Author', choices=[(1, 'User1'), (2, 'User2')]...)`
+* Saving `Post` to database
+* Base it on `user_add`.
+
+### Add nice breadcrumbs on top of page
+* [Breadcrumbs from bootstrap](https://getbootstrap.com/docs/3.3/components/#breadcrumbs)
+* Add it in html on top of every page:
+  * `users`
+  * `user_details`
+  * `post_details`
+* https://readingraphics.com/book-summary-dont-make-me-think/ -> Web Navigation
 
 
-[Available Flask-SQLAlchemy field types]: https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#simple-example
+[StringField wtf field]: https://wtforms.readthedocs.io/en/2.3.x/fields/#wtforms.fields.StringField
+[TextArea wtf widget]: https://wtforms.readthedocs.io/en/2.3.x/widgets/#wtforms.widgets.TextArea

@@ -39,4 +39,4 @@ def create_posts(n=10, *, user_id=None):
 if __name__ == '__main__':
     db.create_all()
     delete_all()
-    create_users(20)
+    create_users(20, posts_per_user=10)

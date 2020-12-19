@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_basicauth import BasicAuth
 from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
@@ -15,6 +16,7 @@ app.config.from_object(Config)
 Bootstrap(app)
 toolbar = DebugToolbarExtension(app)
 db = SQLAlchemy(app)
+basic_auth = BasicAuth(app)
 
 # blueprints registration
 from .main import bp as main_bp

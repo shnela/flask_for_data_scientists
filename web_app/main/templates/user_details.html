@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block custom_content %}
+  <ol class="breadcrumb">
+    <li><a href="{{ url_for('main.users') }}">Users</a></li>
+    <li class="active">User details</li>
+  </ol>
+
   <h1>[{{ user.id }}] {{ user.username }}</h1>
 
   <h2>Posts ({{ user.posts|length }})</h2>
